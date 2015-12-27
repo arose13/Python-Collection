@@ -50,6 +50,10 @@ def f(x, y):
     return (x ** 2) * (y ** 2)
 
 
+def sse(actual, predicted):
+    return np.sum((actual - predicted) ** 2) / len(actual)
+
+
 # Set random value so repeatability
 np.random.seed(1992)
 
@@ -91,8 +95,9 @@ trained_k8_model = knn8.fit(training_points, training_targets)
 trained_k13_model = knn13.fit(training_points, training_targets)
 
 # Test Predictions
-random_test_x = np.random.rand(20, 1) * 6 - 3
-random_test_y = np.random.rand(20, 1) * 6 - 3
+number_of_test_points = 100
+random_test_x = np.random.rand(number_of_test_points, 1) * 6 - 3
+random_test_y = np.random.rand(number_of_test_points, 1) * 6 - 3
 test_points = np.column_stack((random_test_x, random_test_y))
 
 actual_values = f(random_test_x, random_test_y).T
@@ -117,10 +122,10 @@ print(predicted_average)
 
 print('ERRORS\n---------------------------------------------------')
 
-error_k5 = np.sum(np.abs(actual_values - predicted_k5)) / len(actual_values)
-error_k8 = np.sum(np.abs(actual_values - predicted_k8)) / len(actual_values)
-error_k13 = np.sum(np.abs(actual_values - predicted_k13)) / len(actual_values)
-error_average = np.sum(np.abs(actual_values - predicted_average)) / len(actual_values)
+error_k5 = sse(actual_values, predicted_k5)
+error_k8 = sse(actual_values, predicted_k8)
+error_k13 = sse(actual_values, predicted_k13)
+error_average = sse(actual_values, predicted_average)
 
 print('k = {} error {}'.format(k5, error_k5))
 # print(actual_values - predicted_k5)
