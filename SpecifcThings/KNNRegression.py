@@ -80,11 +80,10 @@ k8 = 8
 k13 = 13
 
 # Generate Models
-knn5 = neighbors.KNeighborsRegressor(n_neighbors=k5, weights='uniform')
-knn8 = neighbors.KNeighborsRegressor(n_neighbors=k8, weights='uniform')
-knn13 = neighbors.KNeighborsRegressor(n_neighbors=k13, weights='uniform')
+knn5 = neighbors.KNeighborsRegressor(n_neighbors=k5, weights=knn_weight)
+knn8 = neighbors.KNeighborsRegressor(n_neighbors=k8, weights=knn_weight)
+knn13 = neighbors.KNeighborsRegressor(n_neighbors=k13, weights=knn_weight)
 
-# NOTE there is a matrix math way of doing this! I just can't remember
 training_targets = []
 for pos in range(len(training_points)):
     training_targets.append(f(training_points[pos][0], training_points[pos][1]))
