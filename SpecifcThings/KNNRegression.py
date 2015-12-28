@@ -50,7 +50,7 @@ def f(x, y):
     return (x ** 2) * (y ** 2)
 
 
-def sse(actual, predicted):
+def mse(actual, predicted):
     return np.sum((actual - predicted) ** 2) / len(actual)
 
 
@@ -121,10 +121,10 @@ print(predicted_average)
 
 print('ERRORS\n---------------------------------------------------')
 
-error_k5 = sse(actual_values, predicted_k5)
-error_k8 = sse(actual_values, predicted_k8)
-error_k13 = sse(actual_values, predicted_k13)
-error_average = sse(actual_values, predicted_average)
+error_k5 = mse(actual_values, predicted_k5)
+error_k8 = mse(actual_values, predicted_k8)
+error_k13 = mse(actual_values, predicted_k13)
+error_average = mse(actual_values, predicted_average)
 
 print('k = {} error {}'.format(k5, error_k5))
 # print(actual_values - predicted_k5)
