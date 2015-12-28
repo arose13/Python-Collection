@@ -30,3 +30,12 @@ print(f)
 g = df.dropna().values
 print('\nNumPy array with the NaN rows removed')
 print(g)
+
+h = g.T  # Transpose. We're going to select the first 60% of rows
+print('\nNumPy array Transposed')
+print(h)
+
+# Select the first 60% of rows
+h60 = h[0:(round(0.6 * len(h)))]
+print('\nFirst 60% of the transposed rows')
+print(h60)
