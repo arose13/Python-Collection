@@ -8,7 +8,7 @@ import pandas as pd
 a = [1, 2, 3, 0]
 b = [4, 5, 6, -3]
 c = [7, 8, 9, -6]
-d = [10, None, 12, -12]
+d = [10, np.nan, 12, -12]
 e = [13, 14, 15, -15]
 
 # Make DataFrame with the data
@@ -50,3 +50,14 @@ print(h60)
 h40 = h[(round(0.6 * len(h))): len(h)]
 print('\nLast 40% of the transposed rows')
 print(h40)
+
+print('\nShifting values in a single column in a particular direction')
+i1 = [1, 2, 3]
+i2 = [1, 2, 3]
+i3 = [1, 2, 3]
+
+i = np.column_stack((i1, i2, i3))
+print('Before\n', i)
+
+i[:, 0] = np.roll(i[:, 0], -1)
+print('After\n', i)
