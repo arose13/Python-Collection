@@ -51,6 +51,7 @@ h40 = h[(round(0.6 * len(h))): len(h)]
 print('\nLast 40% of the transposed rows')
 print(h40)
 
+# Shifting Columns
 print('\nShifting values in a single column in a particular direction')
 i1 = [1, 2, 3]
 i2 = [1, 2, 3]
@@ -61,3 +62,10 @@ print('Before\n', i)
 
 i[:, 0] = np.roll(i[:, 0], -1)
 print('After\n', i)
+
+# Single Column shifting
+i1_shift = np.roll(i1, -1)
+i_shift = np.column_stack((i1_shift, i2, i3))
+print('Single Column Shift')
+print(i1_shift)
+print(i_shift)
