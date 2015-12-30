@@ -69,3 +69,11 @@ i_shift = np.column_stack((i1_shift, i2, i3))
 print('Single Column Shift')
 print(i1_shift)
 print(i_shift)
+
+# Let's count the number of elements that fit a certain condition
+j = np.array([1, 1, -1, 1, 1, -1, -1, 1, 1, 1])
+j_only_ones = j[np.where(j > 0)]
+print('Count Elements that fit certain conditions')
+print(j)
+print(j_only_ones)
+print(len(j_only_ones) / len(j))
