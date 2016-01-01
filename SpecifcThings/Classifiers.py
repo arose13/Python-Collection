@@ -1,25 +1,25 @@
 # Random Forest (average of many decision problems)
-import math
 import seaborn as sns
 from matplotlib import pyplot as plt
-from sklearn.metrics import confusion_matrix
 from sklearn.cross_validation import train_test_split, cross_val_score
 from sklearn.datasets import make_blobs
-from sklearn.naive_bayes import GaussianNB, BernoulliNB
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis, QuadraticDiscriminantAnalysis
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import confusion_matrix
+from sklearn.naive_bayes import GaussianNB, BernoulliNB
 from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
 
 __author__ = 'Anthony Rose'
 sns.set()
 
 
 # Accuracy Metrics
-def print_accuracy(score, title):
-    print('{} Accuracy: {} +/- {} std'.format(title, score.mean(), score.std() * 2))
+def print_accuracy(input_score, title):
+    print('{} Accuracy: {} +/- {} std'.format(title, input_score.mean(), input_score.std() * 2))
 
 
-def plot_confusion_matrix(cm, title='Model', cmap=plt.cm.Blues):
+def plot_confusion_matrix(cm, title='Model', cmap=plt.cm.Greens):
     plt.imshow(cm, interpolation='nearest', cmap=cmap)
     plt.title(title + ' Confusion Matrix')
     plt.colorbar()
@@ -30,7 +30,7 @@ def plot_confusion_matrix(cm, title='Model', cmap=plt.cm.Blues):
 
 
 # Make.... blobs (clusters)
-sample_size = 250
+sample_size = 500
 x_data, y_data = make_blobs(n_samples=sample_size, centers=3, random_state=1992, cluster_std=2.0)
 
 
@@ -45,8 +45,83 @@ plt.scatter(x_train[:, 0], x_train[:, 1], s=50, c=y_train, cmap='rainbow')
 plt.show()
 
 '''
-Decision Tree Classifier
+Loop Through Classifiers
 '''
+
+classifiers = [
+    LinearDiscriminantAnalysis(),
+    QuadraticDiscriminantAnalysis(),
+    DecisionTreeClassifier(),
+    SVC(),
+    SVC(gamma=1),
+    AdaBoostClassifier(),
+    GaussianNB(),
+    BernoulliNB(),
+    RandomForestClassifier(n_estimators=300, max_depth=5)
+]
+
+names = [
+    'LDA',
+    'QDA',
+    'DT',
+    'SVC',
+    'SVC RBF',
+    'AdaB',
+    'G-NB',
+    'B-NB',
+    'RF'
+]
+
+for name, classifier in zip(names, classifiers):
+    # Train
+    classifier.fit(x_train, y_train)
+    
+    # Classification
+    score = cross_val_score(classifier, x_test, y_test)
+    print_accuracy(score, name)
+    
+    # Display Predictions
+    plot_confusion_matrix(
+        confusion_matrix(y_test, classifier.predict(x_test)),
+        title=name
+    )
+
+'''
+Linear Discriminate Analysis
+
+# Train model
+lda = LinearDiscriminantAnalysis()
+lda.fit(x_train, y_train)
+
+# Test Classification
+lda_score = cross_val_score(lda, x_test, y_test)
+print_accuracy(lda_score, 'LDA')
+
+# Display Predictions
+plot_confusion_matrix(
+    confusion_matrix(y_test, lda.predict(x_test)),
+    title='LDA'
+)
+
+
+Quadratic Discriminate Analysis
+
+qda = QuadraticDiscriminantAnalysis()
+qda.fit(x_train, y_train)
+
+# Test Classification
+qda_score = cross_val_score(qda, x_test, y_test)
+print_accuracy(qda_score, 'QDA')
+
+# Display Predictions
+plot_confusion_matrix(
+    confusion_matrix(y_test, qda.predict(x_test)),
+    title='QDA'
+)
+
+
+Decision Tree Classifier
+
 # Train model
 max_tree_depth = math.floor(math.log(sample_size / 10) / math.log(2))  # This is always generate the max tree depth
 decision_tree = DecisionTreeClassifier()
@@ -62,9 +137,9 @@ plot_confusion_matrix(
     title='Decision Tree'
 )
 
-'''
+
 Support Vector Machine Classification
-'''
+
 # Train SVM Model
 svm_default = SVC()
 svm_default.fit(x_train, y_train)
@@ -79,9 +154,9 @@ plot_confusion_matrix(
     title='SVM Normal'
 )
 
-'''
+
 Support Vector Machine with Radial Bias Function Classification
-'''
+
 # Train SVM RBF Model
 svm_rbf = SVC(gamma=1)
 svm_rbf.fit(x_train, y_train)
@@ -96,9 +171,9 @@ plot_confusion_matrix(
     title='SVM RBF'
 )
 
-'''
+
 AdaBoost Classification
-'''
+
 # Train AdaBoost Model
 adaboost = AdaBoostClassifier(n_estimators=50)
 adaboost.fit(x_train, y_train)
@@ -113,9 +188,9 @@ plot_confusion_matrix(
     title='Adaboost'
 )
 
-'''
+
 Naive Bayes Classification Models
-'''
+
 # Train Normal Distribution Naive Bayes Model
 gaussian_bayes = GaussianNB()
 gaussian_bayes.fit(x_train, y_train)
@@ -144,9 +219,9 @@ plot_confusion_matrix(
     title='Bernoulli Bayes'
 )
 
-'''
+
 Random Forest of Decision Trees
-'''
+
 # Train model
 random_forest = RandomForestClassifier(n_estimators=300, max_depth=5)
 random_forest.fit(x_train, y_train)
@@ -160,3 +235,4 @@ plot_confusion_matrix(
     confusion_matrix(y_test, random_forest.predict(x_test)),
     title='Random Forest'
 )
+'''
