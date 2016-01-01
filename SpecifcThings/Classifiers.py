@@ -30,8 +30,8 @@ def plot_confusion_matrix(cm, title='Model', cmap=plt.cm.Blues):
 
 
 # Make.... blobs (clusters)
-sample_size = 500
-x_data, y_data = make_blobs(n_samples=sample_size, centers=7, random_state=1992, cluster_std=1.0)
+sample_size = 250
+x_data, y_data = make_blobs(n_samples=sample_size, centers=3, random_state=1992, cluster_std=2.0)
 
 
 plt.title('All Data')

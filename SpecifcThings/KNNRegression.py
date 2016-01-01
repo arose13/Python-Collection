@@ -1,8 +1,11 @@
 # kNN Regression. Maybe cheating maybe not :D. kNN Regressions are sensitive to outliers
 import numpy as np
+import seaborn as sns
 from matplotlib import pyplot as graph
 from matplotlib import pylab
 from sklearn import neighbors
+
+sns.set()
 
 np.random.seed(1992)
 x_range = 10
