@@ -1,4 +1,5 @@
 # Random Forest (average of many decision problems)
+import math
 import seaborn as sns
 from matplotlib import pyplot as plt
 from sklearn.cross_validation import train_test_split, cross_val_score
@@ -57,7 +58,7 @@ classifiers = [
     AdaBoostClassifier(),
     GaussianNB(),
     BernoulliNB(),
-    RandomForestClassifier(n_estimators=300, max_depth=5)
+    RandomForestClassifier(n_estimators=300, max_depth=(math.floor(math.log(sample_size/10)/math.log(2))))
 ]
 
 names = [
