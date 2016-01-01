@@ -1,7 +1,7 @@
 # Random Forest (average of many decision problems)
 import math
 import seaborn as sns
-from matplotlib import pyplot as plt
+from matplotlib import pyplot as graph
 from sklearn.cross_validation import train_test_split, cross_val_score
 from sklearn.datasets import make_blobs
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis, QuadraticDiscriminantAnalysis
@@ -20,14 +20,14 @@ def print_accuracy(input_score, title):
     print('{} Accuracy: {} +/- {} std'.format(title, input_score.mean(), input_score.std() * 2))
 
 
-def plot_confusion_matrix(cm, title='Model', cmap=plt.cm.Greens):
-    plt.imshow(cm, interpolation='nearest', cmap=cmap)
-    plt.title(title + ' Confusion Matrix')
-    plt.colorbar()
-    plt.axis('tight')
-    plt.ylabel('True label')
-    plt.xlabel('Predicted label')
-    plt.show()
+def plot_confusion_matrix(cm, title='Model', cmap=graph.cm.Greens):
+    graph.imshow(cm, interpolation='nearest', cmap=cmap)
+    graph.title(title + ' Confusion Matrix')
+    graph.colorbar()
+    graph.axis('tight')
+    graph.ylabel('True label')
+    graph.xlabel('Predicted label')
+    graph.show()
 
 
 # Make.... blobs (clusters)
@@ -35,15 +35,15 @@ sample_size = 500
 x_data, y_data = make_blobs(n_samples=sample_size, centers=3, random_state=1992, cluster_std=2.0)
 
 
-plt.title('All Data')
-plt.scatter(x_data[:, 0], x_data[:, 1], s=50, c=y_data, cmap='rainbow')
-plt.show()
+graph.title('All Data')
+graph.scatter(x_data[:, 0], x_data[:, 1], s=50, c=y_data, cmap='rainbow')
+graph.show()
 
 # Training and testing data
 x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=0.3)
-plt.title('Training Data')
-plt.scatter(x_train[:, 0], x_train[:, 1], s=50, c=y_train, cmap='rainbow')
-plt.show()
+graph.title('Training Data')
+graph.scatter(x_train[:, 0], x_train[:, 1], s=50, c=y_train, cmap='rainbow')
+graph.show()
 
 '''
 Loop Through Classifiers
