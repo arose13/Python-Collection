@@ -1,7 +1,8 @@
-# Random Forest (average of many decision problems)
+# Classification Algorithms TODO add a ANN
 import math
 import seaborn as sns
 from matplotlib import pyplot as graph
+from sklearn.preprocessing import StandardScaler
 from sklearn.cross_validation import train_test_split, cross_val_score
 from sklearn.datasets import make_blobs
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis, QuadraticDiscriminantAnalysis
@@ -34,8 +35,14 @@ def plot_confusion_matrix(cm, title='Model', cmap=graph.cm.Greens):
 sample_size = 500
 x_data, y_data = make_blobs(n_samples=sample_size, centers=3, random_state=1992, cluster_std=2.0)
 
-
 graph.title('All Data')
+graph.scatter(x_data[:, 0], x_data[:, 1], s=50, c=y_data, cmap='rainbow')
+graph.show()
+
+# Standardise Data
+x_data = StandardScaler().fit_transform(x_data)  # Standard when the units are different
+
+graph.title('Standardised Data')
 graph.scatter(x_data[:, 0], x_data[:, 1], s=50, c=y_data, cmap='rainbow')
 graph.show()
 
