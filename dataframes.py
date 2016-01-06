@@ -64,7 +64,7 @@ i[:, 0] = np.roll(i[:, 0], -1)
 print('After\n', i)
 
 # Single Column shifting
-i1_shift = np.roll(i1, -1)
+i1_shift = np.roll(i1, 1)
 i_shift = np.column_stack((i1_shift, i2, i3))
 print('Single Column Shift')
 print(i1_shift)
