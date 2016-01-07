@@ -6,7 +6,7 @@ from matplotlib import pyplot as graph
 from sklearn.preprocessing import StandardScaler
 from sklearn.cross_validation import train_test_split, cross_val_score
 from sklearn.datasets import make_blobs
-from sklearn.linear_model import Perceptron
+from sklearn.linear_model import Perceptron, LogisticRegressionCV
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis, QuadraticDiscriminantAnalysis
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.metrics import confusion_matrix
@@ -81,6 +81,7 @@ Loop Through Classifiers
 
 classifiers = [
     Perceptron(n_iter=100, eta0=0.1, random_state=1992),
+    LogisticRegressionCV(Cs=100, max_iter=10000, tol=1e-5),
     LinearDiscriminantAnalysis(),
     QuadraticDiscriminantAnalysis(),
     DecisionTreeClassifier(),
@@ -94,6 +95,7 @@ classifiers = [
 
 names = [
     'Ptron',
+    'Logit',
     'LDA',
     'QDA',
     'DT',
@@ -124,7 +126,6 @@ for name, classifier in zip(names, classifiers):
         x_train,
         x_test,
         y_train,
-        y_test,
         classifier,
         title=name
     )
