@@ -33,7 +33,7 @@ def plot_confusion_matrix(cm, title='Model', cmap=graph.cm.Greens):
     graph.show()
     
     
-def plot_decision_regions(x, x_train, x_test, y_train, y_test, clf, title='X', resolution=0.02):
+def plot_decision_regions(x, x_train, x_test, y_train, clf, title='X', resolution=0.02):
     # Plot decision surface
     x1_min, x1_max = x[:, 0].min() - 1, x[:, 0].max() + 1
     x2_min, x2_max = x[:, 1].min() - 1, x[:, 1].max() + 1
