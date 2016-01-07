@@ -5,6 +5,7 @@ import seaborn as sns
 from matplotlib import pyplot as graph
 from sklearn.preprocessing import StandardScaler
 from sklearn.cross_validation import train_test_split, cross_val_score
+from sklearn.learning_curve import learning_curve
 from sklearn.datasets import make_blobs
 from sklearn.linear_model import Perceptron, LogisticRegressionCV
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis, QuadraticDiscriminantAnalysis
@@ -33,7 +34,7 @@ def plot_confusion_matrix(cm, title='Model', cmap=graph.cm.Greens):
     graph.show()
     
     
-def plot_decision_regions(x, x_train, x_test, y_train, clf, title='X', resolution=0.02):
+def plot_decision_regions(x, xtrain, xtest, ytrain, clf, title='X', resolution=0.02):
     # Plot decision surface
     x1_min, x1_max = x[:, 0].min() - 1, x[:, 0].max() + 1
     x2_min, x2_max = x[:, 1].min() - 1, x[:, 1].max() + 1
@@ -47,16 +48,41 @@ def plot_decision_regions(x, x_train, x_test, y_train, clf, title='X', resolutio
     graph.ylim(xx2.min(), xx2.max())
 
     # Plot Data Points
-    graph.scatter(x_test[:, 0], x_test[:, 1], marker='o', c=clf.predict(x_test), cmap='rainbow', label='Predicted')
-    graph.scatter(x_train[:, 0], x_train[:, 1], marker='x', c=y_train, cmap='rainbow', label='Train')
+    graph.scatter(xtest[:, 0], xtest[:, 1], marker='x', c=clf.predict(xtest), cmap='rainbow', label='Predicted')
+    graph.scatter(xtrain[:, 0], xtrain[:, 1], marker='o', c=ytrain, cmap='rainbow', label='Train')
     graph.legend(loc=0)
     graph.title(title)
     graph.show()
 
 
+def plot_learning_curve(xtrain, ytrain, clf):
+    train_sizes, train_scores, test_scores = learning_curve(
+        clf, xtrain, ytrain, train_sizes=np.linspace(0.1, 1.0, 10), cv=10
+    )
+    train_mean = np.mean(train_scores, axis=1)
+    train_std = np.std(train_scores, axis=1)
+    test_mean = np.mean(test_scores, axis=1)
+    test_std = np.std(test_scores, axis=1)
+
+    # Display Learning Graph
+    # Training Curve
+    graph.plot(train_sizes, train_mean, color='blue', label='Training Acc')
+    graph.fill_between(train_sizes, train_mean + train_std, train_mean - train_std, alpha=0.15, color='blue')
+
+    # Testing Curve
+    graph.plot(train_sizes, test_mean, color='green', label='Validating Acc')
+    graph.fill_between(train_sizes, test_mean + test_std, test_mean - test_std, alpha=0.15, color='green')
+
+    graph.grid()
+    graph.xlabel('Training Sample Size')
+    graph.ylabel('Accuracy (p)')
+    graph.legend(loc=0)
+    graph.show()
+
+
 # Make.... blobs (clusters)
 sample_size = 500
-x_data, y_data = make_blobs(n_samples=sample_size, centers=5, random_state=1992, cluster_std=1.0)
+x_data, y_data = make_blobs(n_samples=sample_size, centers=3, random_state=1992, cluster_std=2.0)
 
 graph.title('All Data')
 graph.scatter(x_data[:, 0], x_data[:, 1], s=50, c=y_data, cmap='rainbow')
@@ -81,7 +107,7 @@ Loop Through Classifiers
 
 classifiers = [
     Perceptron(n_iter=100, eta0=0.1, random_state=1992),
-    LogisticRegressionCV(Cs=100, max_iter=10000, tol=1e-5),
+    LogisticRegressionCV(Cs=50, max_iter=500),
     LinearDiscriminantAnalysis(),
     QuadraticDiscriminantAnalysis(),
     DecisionTreeClassifier(),
@@ -115,7 +141,9 @@ for name, classifier in zip(names, classifiers):
     score = cross_val_score(classifier, x_test, y_test)
     print_accuracy(score, name)
     
-    # Display Predictions
+    # Display Performance
+    plot_learning_curve(x_train, y_train, classifier)
+
     plot_confusion_matrix(
         confusion_matrix(y_test, classifier.predict(x_test)),
         title=name
