@@ -38,5 +38,37 @@ def read_post_request():
     return message
 
 
+# Return a JSON object
+@app.route('/json/<a>/<b>', methods=methods)
+def json_object(a, b):
+    return jsonify(alpha=a, bravo=b)
+
+
+# Return JSON under more interesting conditions
+@app.route('/json/<a>', methods=methods)
+def json_with_post(a):
+    """
+    The JSON Object I'm Sending
+
+    {
+    "email": "abc@xyz.com",
+    "firstname": "Stephen",
+    "lastname": "Rose",
+    "gender": 1,
+    }
+
+    :param a:
+    :return:
+    """
+    if request.method == 'POST':
+        payload = request.get_json()
+        return jsonify(
+                alpha=a,
+                bravo='{} {}'.format(payload['firstname'], payload['lastname']),
+                charlie=payload['email']
+        )
+    else:
+        return jsonify(alpha=a)
+
 if __name__ == '__main__':
     app.run()  # Actually starts the application
