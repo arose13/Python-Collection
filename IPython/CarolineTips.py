@@ -4,6 +4,7 @@ import seaborn as sns
 import scipy.stats as stats
 import statsmodels.stats.multicomp as posthoc
 import matplotlib.pyplot as graph
+
 sns.set()
 
 
@@ -33,34 +34,16 @@ x_line = [data['Hours'].min(), data['Hours'].max()]
 y_line = [line(m, data['Hours'].min(), b), line(m, data['Hours'].max(), b)]
 
 # Visualise Data
-graph.title('Tips Regression Rsq:{} p:{}'.format(round(r_value**2, 5), p_value))
-graph.scatter(data['Hours'], data['Tips'])
-graph.plot(x_line, y_line)
-graph.xlabel('Hours')
-graph.ylabel('Tips ($)')
+sns.jointplot(x='Hours', y='Tips', data=pd.DataFrame(data, columns=['Hours', 'Tips']))
 graph.show()
 
 # Which day is best?
-day_range = [0, 1, 2, 3, 4, 5, 6]
-day_array = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-means = []
-stds = []
+day_array = {0: 'Mon', 1: 'Tues', 2: 'Weds', 3: 'Thurs', 4: 'Fri', 5: 'Sat', 6: 'Sun'}
 
-for day in range(len(day_range)):
-    rows = data.where(data['Day'] == day)['Tips per Hour']
+bar_graph_data = pd.DataFrame(data, columns=['Day', 'Tips per Hour'])
+bar_graph_data['Day'] = bar_graph_data['Day'].apply(lambda x: day_array[x])
 
-    mean = rows.mean()
-    std = rows.std()
-
-    means.append(mean)
-    stds.append(std)
-
-graph.title('Average Tips per Day')
-graph.bar(day_range, means)
-graph.scatter(data['Day'], data['Tips per Hour'], marker='x')
-graph.ylabel('Mean Tips $')
-graph.xlabel('Days')
-graph.xticks(day_range, day_array)
+sns.barplot(x='Day', y='Tips per Hour', data=bar_graph_data)
 graph.show()
 
 # Run ANOVA with Post Hoc test to figure which day is significantly different
