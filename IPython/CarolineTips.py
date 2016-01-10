@@ -37,13 +37,15 @@ y_line = [line(m, data['Hours'].min(), b), line(m, data['Hours'].max(), b)]
 sns.jointplot(x='Hours', y='Tips', data=pd.DataFrame(data, columns=['Hours', 'Tips']))
 graph.show()
 
-# Which day is best?
+# Which day has the best tips per hour rate?
 day_array = {0: 'Mon', 1: 'Tues', 2: 'Weds', 3: 'Thurs', 4: 'Fri', 5: 'Sat', 6: 'Sun'}
 
 bar_graph_data = pd.DataFrame(data, columns=['Day', 'Tips per Hour'])
 bar_graph_data['Day'] = bar_graph_data['Day'].apply(lambda x: day_array[x])
 
-sns.barplot(x='Day', y='Tips per Hour', data=bar_graph_data)
+sns.barplot(x='Day', y='Tips per Hour', data=bar_graph_data, palette='Blues_d')
+graph.title('Which day has the best Tips per Hour Rate?')
+graph.ylabel('Tips / Hour')
 graph.show()
 
 # Run ANOVA with Post Hoc test to figure which day is significantly different
