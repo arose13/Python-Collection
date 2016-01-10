@@ -10,6 +10,8 @@ __author__ = 'Anthony Rose'
 class EstimateFeatureImportance:
     """
     This uses a random forest to assess each feature's importance
+
+    Use this when you don't think PCA or other kinds of Component Analysis is the right thing to do.
     """
     def __init__(self, x, y_class, x_labels):
         self.x = x
@@ -49,11 +51,13 @@ if __name__ == '__main__':
     from sklearn.datasets import load_iris, load_breast_cancer
     sns.set()
 
-    # Test with the iris dataset
+    # Test Datasets
     iris = load_iris()
-    x_iris = iris.data
-    y_iris = iris.target
+    boobs = load_breast_cancer()
 
     # Run Feature Importance
-    feature_importance = EstimateFeatureImportance(x_iris, y_iris, iris.feature_names)
-    feature_importance.graph_importance()
+    iris_feature_analysis = EstimateFeatureImportance(iris.data, iris.target, iris.feature_names)
+    iris_feature_analysis.graph_importance()
+
+    boobs_feature_analysis = EstimateFeatureImportance(boobs.data, boobs.target, boobs.feature_names)
+    boobs_feature_analysis.graph_importance()

@@ -10,7 +10,7 @@ from sklearn.datasets import make_blobs
 from sklearn.linear_model import Perceptron, LogisticRegressionCV
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis, QuadraticDiscriminantAnalysis
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, roc_curve, auc
 from sklearn.naive_bayes import GaussianNB, BernoulliNB
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
@@ -32,8 +32,8 @@ def plot_confusion_matrix(cm, title='Model', cmap=graph.cm.Greens):
     graph.ylabel('True label')
     graph.xlabel('Predicted label')
     graph.show()
-    
-    
+
+
 def plot_decision_regions(x, xtrain, xtest, ytrain, clf, title='X', resolution=0.02):
     # Plot decision surface
     x1_min, x1_max = x[:, 0].min() - 1, x[:, 0].max() + 1
@@ -57,7 +57,7 @@ def plot_decision_regions(x, xtrain, xtest, ytrain, clf, title='X', resolution=0
 
 def plot_learning_curve(xtrain, ytrain, clf):
     train_sizes, train_scores, test_scores = learning_curve(
-        clf, xtrain, ytrain, train_sizes=np.linspace(0.1, 1.0, 10), cv=10
+            clf, xtrain, ytrain, train_sizes=np.linspace(0.1, 1.0, 10), cv=10
     )
     train_mean = np.mean(train_scores, axis=1)
     train_std = np.std(train_scores, axis=1)
@@ -80,9 +80,25 @@ def plot_learning_curve(xtrain, ytrain, clf):
     graph.show()
 
 
+def plot_roc_auc_stats(y_target, y_predicted, title='Model'):
+    # Receiver Operator Characteristic Area Under the Curve
+    # FPR = False Positive Rate, TPR = True Positive Rate
+    graph_limits = [-0.1, 1.1]
+    fpr, tpr, thresholds = roc_curve(y_target, y_predicted)
+
+    graph.plot(fpr, tpr, label='{} (AUC = {})'.format(title, auc(x=fpr, y=tpr)))
+    graph.legend(loc='lower right')
+    graph.plot([0, 1], [0, 1], linestyle='--', color='gray', label='Random Guessing')
+    graph.xlim(graph_limits)
+    graph.ylim(graph_limits)
+    graph.xlabel('False Positive Rates')
+    graph.ylabel('True Positive Rates')
+    graph.show()
+
+
 # Make.... blobs (clusters)
 sample_size = 500
-x_data, y_data = make_blobs(n_samples=sample_size, centers=3, random_state=1992, cluster_std=2.0)
+x_data, y_data = make_blobs(n_samples=sample_size, centers=2, random_state=1992, cluster_std=2.0)
 
 graph.title('All Data')
 graph.scatter(x_data[:, 0], x_data[:, 1], s=50, c=y_data, cmap='rainbow')
@@ -116,7 +132,7 @@ classifiers = [
     AdaBoostClassifier(),
     GaussianNB(),
     BernoulliNB(),
-    RandomForestClassifier(n_estimators=300, max_depth=(math.floor(math.log(sample_size/10)/math.log(2))))
+    RandomForestClassifier(n_estimators=300, max_depth=(math.floor(math.log(sample_size / 10) / math.log(2))))
 ]
 
 names = [
@@ -136,24 +152,27 @@ names = [
 for name, classifier in zip(names, classifiers):
     # Train
     classifier.fit(x_train, y_train)
-    
+
     # Classification
     score = cross_val_score(classifier, x_test, y_test)
     print_accuracy(score, name)
-    
+
+    # Predict
+    y_predicted = classifier.predict(x_test)
+
     # Display Performance
     plot_learning_curve(x_train, y_train, classifier)
 
     plot_confusion_matrix(
-        confusion_matrix(y_test, classifier.predict(x_test)),
-        title=name
+            confusion_matrix(y_test, y_predicted),
+            title=name
     )
 
     plot_decision_regions(
-        x_data,
-        x_train,
-        x_test,
-        y_train,
-        classifier,
-        title=name
+            x_data,
+            x_train,
+            x_test,
+            y_train,
+            classifier,
+            title=name
     )
