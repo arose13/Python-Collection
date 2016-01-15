@@ -77,3 +77,8 @@ print('Count Elements that fit certain conditions')
 print(j)
 print(j_only_ones)
 print(len(j_only_ones) / len(j))
+
+# Getting the last row of a data frame
+print('Last Row\n', df.tail(1))
+print('Precisely\n', df.tail(1)['delta'].values)
+print('Conditional\n', 'match' if (df.tail(1)['delta'].values == -12.0) else 'mismatch')
