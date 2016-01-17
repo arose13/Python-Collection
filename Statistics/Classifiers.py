@@ -98,7 +98,7 @@ def plot_roc_auc_stats(y_target, y_predicted, title='Model'):
 
 # Make.... blobs (clusters)
 sample_size = 500
-x_data, y_data = make_blobs(n_samples=sample_size, centers=2, random_state=1992, cluster_std=2.0)
+x_data, y_data = make_blobs(n_samples=sample_size, centers=3, random_state=1992, cluster_std=1.0)
 
 graph.title('All Data')
 graph.scatter(x_data[:, 0], x_data[:, 1], s=50, c=y_data, cmap='rainbow')
@@ -161,7 +161,7 @@ for name, classifier in zip(names, classifiers):
     y_predicted = classifier.predict(x_test)
 
     # Display Performance
-    plot_learning_curve(x_train, y_train, classifier)
+    #plot_learning_curve(x_train, y_train, classifier)
 
     plot_confusion_matrix(
             confusion_matrix(y_test, y_predicted),
