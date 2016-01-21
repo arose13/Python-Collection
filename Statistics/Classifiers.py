@@ -7,6 +7,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.cross_validation import train_test_split, cross_val_score
 from sklearn.learning_curve import learning_curve
 from sklearn.datasets import make_blobs
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import Perceptron, LogisticRegressionCV
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis, QuadraticDiscriminantAnalysis
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
@@ -123,6 +124,7 @@ Loop Through Classifiers
 
 classifiers = [
     Perceptron(n_iter=100, eta0=0.1, random_state=1992),
+    KNeighborsClassifier(n_neighbors=5, weights='uniform'),
     LogisticRegressionCV(Cs=50, max_iter=500),
     LinearDiscriminantAnalysis(),
     QuadraticDiscriminantAnalysis(),
@@ -137,6 +139,7 @@ classifiers = [
 
 names = [
     'Ptron',
+    'k-NN'
     'Logit',
     'LDA',
     'QDA',
