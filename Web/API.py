@@ -38,6 +38,20 @@ def read_post_request():
     return message
 
 
+@app.route('/email', methods=['POST'])
+def read_email():
+    payload = request.get_json()
+    symbol_array = payload['portfolio']
+    print(payload)
+    print('Email: {}'.format(payload['email']))
+    print('Array: {}'.format(symbol_array))
+
+    for row in symbol_array:
+        print(row['symbol'])
+
+    return 'Hello!'
+
+
 # Return a JSON object
 @app.route('/json/<a>/<b>', methods=methods)
 def json_object(a, b):
