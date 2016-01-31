@@ -2,9 +2,9 @@ import string
 import random
 import time
 
-possibleCharacters = string.ascii_lowercase + string.digits + string.ascii_uppercase + ' .,!?;:<>[]{}~!@#$%^&*()_+-='
+possibleCharacters = string.ascii_lowercase + string.digits + string.ascii_uppercase + ' .,\'"!?;:<>[]{}~!@#$%^&*()_+-='
 
-target = input("Enter your target text: ")
+target = input('Enter your target text: ')
 attemptThis = ''.join(random.choice(possibleCharacters) for i in range(len(target)))
 attemptNext = ''
 
@@ -27,4 +27,4 @@ while not completed:
     if 'sleep' in target:
         time.sleep(0.25)
 
-print("Target matched! That took " + str(generation) + " generation(s)")
+print('Target matched! That took ' + str(generation) + ' generation(s)')
