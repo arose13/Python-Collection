@@ -1,4 +1,4 @@
-# Classification Algorithms TODO add a ANN
+# Classification Algorithms TODO an ANN
 import math
 import numpy as np
 import seaborn as sns
@@ -8,7 +8,7 @@ from sklearn.cross_validation import train_test_split, cross_val_score
 from sklearn.learning_curve import learning_curve
 from sklearn.datasets import make_blobs
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.linear_model import Perceptron, LogisticRegressionCV
+from sklearn.linear_model import LogisticRegressionCV
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis, QuadraticDiscriminantAnalysis
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.metrics import confusion_matrix, roc_curve, auc
@@ -17,12 +17,17 @@ from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 
 __author__ = 'Anthony Rose'
-sns.set()
+sns.set(font_scale=1.2)
 
 
 # Accuracy Metrics
-def print_accuracy(input_score, title):
-    print('{} Accuracy: {} +/- {} std'.format(title, input_score.mean(), input_score.std() * 2))
+def print_accuracy(input_score, roc_auc, title):
+    print('{} Accuracy: {} +/- {} std, AUC: {}'.format(
+        title,
+        round(input_score.mean(), 4),
+        round(input_score.std() * 2, 4),
+        round(roc_auc, 4)
+    ))
 
 
 def plot_confusion_matrix(cm, title='Model', cmap=graph.cm.Greens):
@@ -56,6 +61,23 @@ def plot_decision_regions(x, xtrain, xtest, ytrain, clf, title='X', resolution=0
     graph.show()
 
 
+def plot_roc_curve(y_test, y_score):
+    false_positive_rate, true_positive_rate, _ = roc_curve(y_test, y_score)
+    roc_auc = auc(false_positive_rate, true_positive_rate)
+    graph_limits = [-0.01, 1.01]
+
+    graph.plot(false_positive_rate, true_positive_rate, linewidth=4, color='green')
+    graph.plot([0, 1], [0, 1], linestyle='--', color='black', label='Random Guessing')
+    graph.title('ROC (AUC = {})'.format(round(roc_auc, 4)))
+    graph.xlabel('False Positive Rate (False Alarm)')
+    graph.ylabel('True Positive Rate (Hit Rate)')
+    graph.xlim(graph_limits)
+    graph.ylim(graph_limits)
+    graph.show()
+
+    return roc_auc
+
+
 def plot_learning_curve(xtrain, ytrain, clf):
     train_sizes, train_scores, test_scores = learning_curve(
             clf, xtrain, ytrain, train_sizes=np.linspace(0.1, 1.0, 10), cv=10
@@ -81,25 +103,9 @@ def plot_learning_curve(xtrain, ytrain, clf):
     graph.show()
 
 
-def plot_roc_auc_stats(y_target, y_predicted, title='Model'):
-    # Receiver Operator Characteristic Area Under the Curve
-    # FPR = False Positive Rate, TPR = True Positive Rate
-    graph_limits = [-0.1, 1.1]
-    fpr, tpr, thresholds = roc_curve(y_target, y_predicted)
-
-    graph.plot(fpr, tpr, label='{} (AUC = {})'.format(title, auc(x=fpr, y=tpr)))
-    graph.legend(loc='lower right')
-    graph.plot([0, 1], [0, 1], linestyle='--', color='gray', label='Random Guessing')
-    graph.xlim(graph_limits)
-    graph.ylim(graph_limits)
-    graph.xlabel('False Positive Rates')
-    graph.ylabel('True Positive Rates')
-    graph.show()
-
-
 # Make.... blobs (clusters)
 sample_size = 500
-x_data, y_data = make_blobs(n_samples=sample_size, centers=3, random_state=1992, cluster_std=2.0)
+x_data, y_data = make_blobs(n_samples=sample_size, centers=2, random_state=1992, cluster_std=2.0)
 
 graph.title('All Data')
 graph.scatter(x_data[:, 0], x_data[:, 1], s=50, c=y_data, cmap='rainbow')
@@ -123,14 +129,13 @@ Loop Through Classifiers
 '''
 
 classifiers = [
-    Perceptron(n_iter=100, eta0=0.1, random_state=1992),
     KNeighborsClassifier(n_neighbors=5, weights='uniform'),
     LogisticRegressionCV(Cs=50, max_iter=500),
     LinearDiscriminantAnalysis(),
     QuadraticDiscriminantAnalysis(),
     DecisionTreeClassifier(),
-    SVC(),
-    SVC(gamma=1),
+    SVC(probability=True),
+    SVC(gamma=1, probability=True),
     AdaBoostClassifier(),
     GaussianNB(),
     BernoulliNB(),
@@ -138,8 +143,7 @@ classifiers = [
 ]
 
 names = [
-    'Ptron',
-    'k-NN'
+    'k-NN',
     'Logit',
     'LDA',
     'QDA',
@@ -158,19 +162,12 @@ for name, classifier in zip(names, classifiers):
 
     # Classification
     score = cross_val_score(classifier, x_test, y_test)
-    print_accuracy(score, name)
 
     # Predict
     y_predicted = classifier.predict(x_test)
+    y_score = classifier.predict_proba(x_test)[:, 1]
 
-    # Display Performance
-    #plot_learning_curve(x_train, y_train, classifier)
-
-    plot_confusion_matrix(
-            confusion_matrix(y_test, y_predicted),
-            title=name
-    )
-
+    # Decision Regions
     plot_decision_regions(
             x_data,
             x_train,
@@ -179,3 +176,12 @@ for name, classifier in zip(names, classifiers):
             classifier,
             title=name
     )
+
+    # Display Performance
+    roc_integral = plot_roc_curve(y_test, y_score)
+    plot_confusion_matrix(
+            confusion_matrix(y_test, y_predicted),
+            title=name
+    )
+
+    print_accuracy(score, roc_integral, name)

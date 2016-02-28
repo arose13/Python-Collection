@@ -1,4 +1,5 @@
 # ROC Curve for Classifiers on the breast cancer dataset
+# By using One vs Rest this allows the ROC curve to generalise to an unlimited number of classes.
 import matplotlib.pyplot as graph
 import seaborn as sns
 from sklearn.cross_validation import train_test_split
