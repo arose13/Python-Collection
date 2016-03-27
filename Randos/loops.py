@@ -1,3 +1,6 @@
+import operator
+
+
 s = 'Anthony is the coolest person in the whole wide world'
 
 
@@ -21,9 +24,25 @@ def else_after_loops():
     else:
         print(" ELSE ")
 
+
+def loop_dictionary():
+    dictionary = {'x': 2, 'z': 8, 'y': 4}
+    sorted_dictionary = sorted(dictionary.items(), key=operator.itemgetter(1))
+    print(sorted_dictionary)
+
+    i = 1
+    for key, value in sorted_dictionary:
+        if i > 2:
+            break
+        print(key, value)
+        i += 1
+
+
 if __name__ == "__main__":
     shortcut_loop_with_continue()
     print()
     stopping_loops_with_break()
     print()
     else_after_loops()
+    print()
+    loop_dictionary()
