@@ -1,19 +1,18 @@
 # Simple Evolution
+import math
 import random
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as graph
 
-# TARGET = 'To be or not to be, that is my question. Because hard string have few repeats'
-TARGET = 'Stephen & Karissa'
+TARGET = 'To be or not to be, that is my question O_O'
 DNA_SIZE = len(TARGET)
-N = len(TARGET) * 10
-MAX_GENERATIONS = int(25e3)
-MUTATION_RATE = 100
+N = 250
+MAX_GENERATIONS = int(5e4)
+MUTATION_RATE = 80 if len(TARGET) > 50 else 100
 
 
 # Helper Functions
-
 def weighted_choice(items):
     weight_total = sum((item[1] for item in items))
     n = random.uniform(0, weight_total)
@@ -35,19 +34,18 @@ def random_population():
     population = []
     for i in range(N):
         dna = ''
-        for c in range(DNA_SIZE):
+        for _ in range(DNA_SIZE):
             dna += random_character()
         population.append(dna)
     return population
 
 
 # Genetic Algorithm Functions
-
 def fitness_function(dna):
     fitness = 0
-    for c in range(DNA_SIZE):
-        fitness += abs(ord(dna[c]) - ord(TARGET[c]))
-    return fitness
+    for i, letter in enumerate(dna):
+        fitness += abs(ord(letter) - ord(TARGET[i]))
+    return fitness ** math.pi
 
 
 def mutate(dna):
@@ -73,8 +71,8 @@ if __name__ == '__main__':
 
     for generation in range(MAX_GENERATIONS + 1):
         current_fitness = fitness_function(real_pop[0])
-        print('Generation: {}, Sample from Population: {}, Fitness: {}, N: {}, mu: {}'.format(
-            generation, real_pop[0], current_fitness, N, MUTATION_RATE
+        print('Generation: {}, Sample from Population: {}, N: {}, mu: {}'.format(
+            generation, real_pop[0], N, MUTATION_RATE
         ), end='\n')
         progress.append(current_fitness)
         weighted_population = []
@@ -123,6 +121,7 @@ if __name__ == '__main__':
 
     graph.plot(progress, alpha=0.33)
     graph.plot(pd.Series(progress).ewm(span=50).mean(), linewidth=3)
+    graph.yscale('log')
     graph.ylabel('Fitness')
     graph.xlabel('Generations')
     graph.show()
