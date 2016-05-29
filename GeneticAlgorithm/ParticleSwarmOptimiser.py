@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def swarm(func, lb, ub, ieqcons=[], f_ieqcons=None, args=(), kwargs={},
+def swarm(func, bounds, ieqcons=[], f_ieqcons=None, args=(), kwargs={},
           swarmsize=100, omega=0.5, phip=0.5, phig=0.5, maxiter=100,
           minstep=1e-12, minfunc=1e-12, debug=False):
     """
@@ -11,10 +11,8 @@ def swarm(func, lb, ub, ieqcons=[], f_ieqcons=None, args=(), kwargs={},
     ==========
     func : function
         The function to be minimized
-    lb :
-        The lower bounds of the design variable(s)
-    ub :
-        The upper bounds of the design variable(s)
+    bounds:
+        The bounds of the design variable(s). In form [(lower, upper), ..., (lower, upper)]
 
     Optional
     ========
@@ -61,14 +59,18 @@ def swarm(func, lb, ub, ieqcons=[], f_ieqcons=None, args=(), kwargs={},
         The objective value at ``g``
 
     """
+    lower_bound, upper_bound = [], []
+    for variable_bounds in bounds:
+        lower_bound.append(variable_bounds[0])
+        upper_bound.append(variable_bounds[1])
 
-    assert len(lb) == len(ub), 'Lower- and upper-bounds must be the same length'
+    assert len(lower_bound) == len(upper_bound), 'Lower- and upper-bounds must be the same length'
     assert hasattr(func, '__call__'), 'Invalid function handle'
-    lb = np.array(lb)
-    ub = np.array(ub)
-    assert np.all(ub > lb), 'All upper-bound values must be greater than lower-bound values'
+    lower_bound = np.array(lower_bound)
+    upper_bound = np.array(upper_bound)
+    assert np.all(upper_bound > lower_bound), 'All upper-bound values must be greater than lower-bound values'
 
-    vhigh = np.abs(ub - lb)
+    vhigh = np.abs(upper_bound - lower_bound)
     vlow = -vhigh
 
     # Check for constraint function(s) #########################################
@@ -93,7 +95,7 @@ def swarm(func, lb, ub, ieqcons=[], f_ieqcons=None, args=(), kwargs={},
 
     # Initialize the particle swarm ############################################
     S = swarmsize
-    D = len(lb)  # the number of dimensions each particle has
+    D = len(lower_bound)  # the number of dimensions each particle has
     x = np.random.rand(S, D)  # particle positions
     v = np.zeros_like(x)  # particle velocities
     p = np.zeros_like(x)  # best particle positions
@@ -103,7 +105,7 @@ def swarm(func, lb, ub, ieqcons=[], f_ieqcons=None, args=(), kwargs={},
 
     for i in range(S):
         # Initialize the particle's position
-        x[i, :] = lb + x[i, :] * (ub - lb)
+        x[i, :] = lower_bound + x[i, :] * (upper_bound - lower_bound)
 
         # Initialize the particle's best known position
         p[i, :] = x[i, :]
@@ -126,8 +128,8 @@ def swarm(func, lb, ub, ieqcons=[], f_ieqcons=None, args=(), kwargs={},
         v[i, :] = vlow + np.random.rand(D) * (vhigh - vlow)
 
     # Iterate until termination criterion met ##################################
-    it = 1
-    while it <= maxiter:
+    iteration_termination = 1
+    while iteration_termination <= maxiter:
         rp = np.random.uniform(size=(S, D))
         rg = np.random.uniform(size=(S, D))
         for i in range(S):
@@ -139,10 +141,10 @@ def swarm(func, lb, ub, ieqcons=[], f_ieqcons=None, args=(), kwargs={},
             # Update the particle's position, correcting lower and upper bound
             # violations, then update the objective function value
             x[i, :] = x[i, :] + v[i, :]
-            mark1 = x[i, :] < lb
-            mark2 = x[i, :] > ub
-            x[i, mark1] = lb[mark1]
-            x[i, mark2] = ub[mark2]
+            mark1 = x[i, :] < lower_bound
+            mark2 = x[i, :] > upper_bound
+            x[i, mark1] = lower_bound[mark1]
+            x[i, mark2] = upper_bound[mark2]
             fx = obj(x[i, :])
 
             # Compare particle's best position (if constraints are satisfied)
@@ -154,7 +156,7 @@ def swarm(func, lb, ub, ieqcons=[], f_ieqcons=None, args=(), kwargs={},
                 # (Can only get here if constraints are satisfied)
                 if fx < fg:
                     if debug:
-                        print('New best for swarm at iteration {:}: {:} {:}'.format(it, x[i, :], fx))
+                        print('New best for swarm at iteration {:}: {:} {:}'.format(iteration_termination, x[i, :], fx))
 
                     tmp = x[i, :].copy()
                     stepsize = np.sqrt(np.sum((g - tmp) ** 2))
@@ -169,8 +171,8 @@ def swarm(func, lb, ub, ieqcons=[], f_ieqcons=None, args=(), kwargs={},
                         fg = fx
 
         if debug:
-            print('Best after iteration {:}: {:} {:}'.format(it, g, fg))
-        it += 1
+            print('Best after iteration {:}: {:} {:}'.format(iteration_termination, g, fg))
+        iteration_termination += 1
 
     print('Stopping search: maximum iterations reached --> {:}'.format(maxiter))
 

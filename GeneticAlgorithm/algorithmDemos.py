@@ -7,19 +7,18 @@ from GeneticAlgorithm.costFunctions import complex_bowl, rosenbrock_function, st
 if __name__ == '__main__':
     title = '\n---------------\n{}\n---------------\n'
 
-    lower_bounds = [-20, -20]
-    upper_bounds = [20, 20]
+    bounds = [(-20, 20)] * 2
     target_string = 'Hello World'
 
     # Anthony
     print(title.format('Custom'))
 
     print('Complex Bowl')
-    optimal_x, optimal_value = swarm(complex_bowl, lb=lower_bounds, ub=upper_bounds)
+    optimal_x, optimal_value = swarm(complex_bowl, bounds=bounds)
     print(optimal_x, optimal_value, '\n')
 
     print('Rosenbrock Function')
-    optimal_x, optimal_value = swarm(rosenbrock_function, lb=lower_bounds, ub=upper_bounds)
+    optimal_x, optimal_value = swarm(rosenbrock_function, bounds=bounds)
     print(optimal_x, optimal_value, '\n')
 
     # Scipy
@@ -36,6 +35,6 @@ if __name__ == '__main__':
     print('String Evolution')
     string_evolution = differential_evolution(
         string_match_score_function, strategy='best1bin',
-        bounds=[(32, 126)] * len(target_string), args=(target_string, True))
+        bounds=[(32, 126)] * len(target_string), args=(target_string, False))
     print(string_evolution)
     print(generate_string_from_array(string_evolution.x.tolist()))
