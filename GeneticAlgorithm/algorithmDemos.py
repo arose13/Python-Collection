@@ -1,7 +1,8 @@
 # Trying to solve this problem in a smaller number of generations and more reliably
 from scipy.optimize import differential_evolution
-from GeneticAlgorithm.costFunctions import complex_bowl, rosenbrock_function, string_match_score_function, generate_string_from_array
 from GeneticAlgorithm.ParticleSwarmOptimiser import swarm
+from GeneticAlgorithm.costFunctions import complex_bowl, rosenbrock_function, string_match_score_function, \
+    generate_string_from_array
 
 if __name__ == '__main__':
     title = '\n---------------\n{}\n---------------\n'
